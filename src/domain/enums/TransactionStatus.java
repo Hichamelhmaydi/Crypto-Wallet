@@ -1,5 +1,7 @@
 package domain.enums;
 
-public class TransactionStatus {
-
+public enum TransactionStatus {
+    EN_ATTENTE,
+    CONFIRMEE,
+    REJETEE
 }
