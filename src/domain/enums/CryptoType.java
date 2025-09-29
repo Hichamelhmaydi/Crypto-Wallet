@@ -1,5 +1,7 @@
 package domain.enums;
 
-public class CryptoType {
-
+public enum CryptoType {
+    BITCOIN , 
+    ETHEREUM
+ 
 }
