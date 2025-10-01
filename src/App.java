@@ -3,8 +3,12 @@
 //import java.sql.ResultSet;
 //import java.sql.Statement;
 //import config.DatabaseConfig;
+
+import ui.Menu;
+
 public class App {
-    public static void main(String[] args) {
-        
+     public static void main(String[] args) {
+        Menu menu = new Menu();
+        menu.demarrer();
     }
 }
