@@ -6,6 +6,6 @@ import java.util.Optional;
 public interface Repository<T, ID> {
     Optional<T> trouverParId(ID id);
     List<T> trouverTous();
-    T sauvegarder(T entity);
-    void supprimer(ID id);
+    T sauvegarder(T entite);
+    void supprimerParId(ID id);
 }

@@ -1,67 +1,37 @@
 package repository;
 
 import domain.Transaction;
-import domain.enums.CryptoType;
-import domain.enums.FeeLevel;
-import domain.enums.TransactionStatus;
+import domain.enums.StatutTransaction;
+import domain.enums.NiveauFrais;
 import config.DatabaseConfig;
+import config.SQL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 public class TransactionRepository implements Repository<Transaction, String> {
+    
     private final DatabaseConfig configBaseDeDonnees;
-
+    
     public TransactionRepository() {
-        this.configBaseDeDonnees = DatabaseConfig.getInstance();
+        this.configBaseDeDonnees = new DatabaseConfig();
     }
-
+    
     @Override
     public Optional<Transaction> trouverParId(String id) {
-        String sql = "SELECT * FROM transactions WHERE id = ?";
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
-             PreparedStatement statement = connexion.prepareStatement(sql)) {
-            
-            statement.setString(1, id);
-            ResultSet resultat = statement.executeQuery();
-            
-            if (resultat.next()) {
-                return Optional.of(creerTransactionDepuisResultSet(resultat));
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la recherche de la transaction: " + e.getMessage());
-        }
+       
         return Optional.empty();
     }
-
-    public List<Transaction> trouverParAdresseSource(String adresseSource) {
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE adresse_source = ?";
-        
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
-             PreparedStatement statement = connexion.prepareStatement(sql)) {
-            
-            statement.setString(1, adresseSource);
-            ResultSet resultat = statement.executeQuery();
-            
-            while (resultat.next()) {
-                transactions.add(creerTransactionDepuisResultSet(resultat));
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la recherche des transactions: " + e.getMessage());
-        }
-        return transactions;
-    }
-
+    
     @Override
     public List<Transaction> trouverTous() {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions ORDER BY date_creation DESC";
         
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
+        try (Connection connexion = configBaseDeDonnees.getConnection();
              Statement statement = connexion.createStatement();
-             ResultSet resultat = statement.executeQuery(sql)) {
+             ResultSet resultat = statement.executeQuery(SQL.SELECTIONNER_TOUTES_TRANSACTIONS)) {
             
             while (resultat.next()) {
                 transactions.add(creerTransactionDepuisResultSet(resultat));
@@ -71,75 +41,77 @@ public class TransactionRepository implements Repository<Transaction, String> {
         }
         return transactions;
     }
-
-    public List<Transaction> trouverEnAttente() {
+    
+    public List<Transaction> trouverParPortefeuille(String idPortefeuille) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE statut = 'EN_ATTENTE' ORDER BY frais DESC";
         
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
-             Statement statement = connexion.createStatement();
-             ResultSet resultat = statement.executeQuery(sql)) {
+        try (Connection connexion = configBaseDeDonnees.getConnection();
+             PreparedStatement statement = connexion.prepareStatement(SQL.SELECTIONNER_TRANSACTIONS_PAR_PORTEFEUILLE)) {
+            
+            statement.setString(1, idPortefeuille);
+            ResultSet resultat = statement.executeQuery();
             
             while (resultat.next()) {
                 transactions.add(creerTransactionDepuisResultSet(resultat));
             }
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la récupération des transactions en attente: " + e.getMessage());
+            System.err.println("Erreur lors de la récupération des transactions: " + e.getMessage());
         }
         return transactions;
     }
-
+    
     @Override
     public Transaction sauvegarder(Transaction transaction) {
-        String sql = "INSERT INTO transactions (id, adresse_source, adresse_destination, montant, " +
-                    "frais, niveau_frais, statut, type_crypto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
-             PreparedStatement statement = connexion.prepareStatement(sql)) {
+        try (Connection connexion = configBaseDeDonnees.getConnection();
+             PreparedStatement statement = connexion.prepareStatement(SQL.INSERER_TRANSACTION)) {
             
             statement.setString(1, transaction.getId());
-            statement.setString(2, transaction.getAdresseSource());
-            statement.setString(3, transaction.getAdresseDestination());
-            statement.setBigDecimal(4, transaction.getMontant());
-            statement.setBigDecimal(5, transaction.getFrais());
-            statement.setString(6, transaction.getNiveauFrais().name());
-            statement.setString(7, transaction.getStatut().name());
-            statement.setString(8, transaction.getTypeCrypto().name());
+            statement.setString(2, transaction.getIdPortefeuille());
+            statement.setString(3, transaction.getAdresseSource());
+            statement.setString(4, transaction.getAdresseDestination());
+            statement.setDouble(5, transaction.getMontant());
+            statement.setDouble(6, transaction.getFrais());
+            statement.setString(7, transaction.getNiveauFrais().name());
+            statement.setString(8, transaction.getStatut().name());
             
             statement.executeUpdate();
             return transaction;
             
         } catch (SQLException e) {
             System.err.println("Erreur lors de la sauvegarde de la transaction: " + e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
     }
-
+    
     @Override
-    public void supprimer(String id) {
-        String sql = "DELETE FROM transactions WHERE id = ?";
-        
-        try (Connection connexion = configBaseDeDonnees.getConnexion();
-             PreparedStatement statement = connexion.prepareStatement(sql)) {
+    public void supprimerParId(String id) {
+        // Implémentation de suppression
+    }
+    
+    public void mettreAJourStatut(String idTransaction, StatutTransaction statut) {
+        try (Connection connexion = configBaseDeDonnees.getConnection();
+             PreparedStatement statement = connexion.prepareStatement(SQL.METTRE_A_JOUR_STATUT_TRANSACTION)) {
             
-            statement.setString(1, id);
+            statement.setString(1, statut.name());
+            statement.setString(2, idTransaction);
             statement.executeUpdate();
             
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la suppression de la transaction: " + e.getMessage());
+            System.err.println("Erreur lors de la mise à jour du statut: " + e.getMessage());
         }
     }
-
+    
     private Transaction creerTransactionDepuisResultSet(ResultSet resultat) throws SQLException {
-        Transaction transaction = new Transaction(
+        return new Transaction(
+            resultat.getString("id"),
+            resultat.getString("id_portefeuille"),
             resultat.getString("adresse_source"),
             resultat.getString("adresse_destination"),
-            resultat.getBigDecimal("montant"),
-            resultat.getBigDecimal("frais"),
-            FeeLevel.valueOf(resultat.getString("niveau_frais")),
-            CryptoType.valueOf(resultat.getString("type_crypto"))
+            resultat.getDouble("montant"),
+            resultat.getDouble("frais"),
+            NiveauFrais.valueOf(resultat.getString("niveau_frais")),
+            StatutTransaction.valueOf(resultat.getString("statut")),
+            resultat.getTimestamp("date_creation").toLocalDateTime()
         );
-        transaction.setStatut(TransactionStatus.valueOf(resultat.getString("statut")));
-        return transaction;
     }
 }
