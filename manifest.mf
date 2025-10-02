@@ -1,0 +1,3 @@
+Main-Class: ui.Menu
+Class-Path: lib/postgresql-42.7.8.jar resources/
+

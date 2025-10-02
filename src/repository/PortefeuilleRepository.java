@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository pour la gestion des portefeuilles en base de données
- * Implémente les opérations CRUD pour les portefeuilles
- */
+
 public class PortefeuilleRepository implements Repository<Portefeuille, String> {
     
     private final DatabaseConfig configBaseDeDonnees;

@@ -1,0 +1,17 @@
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\App.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\config\DatabaseConfig.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\config\SQL.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\domain\Portefeuille.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\domain\Transaction.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\domain\enums\NiveauFrais.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\domain\enums\StatutTransaction.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\domain\enums\TypeCrypto.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\repository\PortefeuilleRepository.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\repository\Repository.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\repository\TransactionRepository.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\service\ServiceMempool.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\service\ServicePortefeuille.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\service\ServiceTransaction.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\ui\Menu.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\util\CalculateurFrais.java
+C:\Users\youco\Desktop\Crypto_Wallet_Simulator\src\util\GenerateurAdresse.java

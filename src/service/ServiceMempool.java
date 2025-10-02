@@ -1,9 +1,7 @@
 package service;
 
 import domain.Transaction;
-import domain.enums.NiveauFrais;
 import repository.TransactionRepository;
-import util.CalculateurFrais;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
